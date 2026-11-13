@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Download Nexus</title>
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="description" content="Nexus is the Everything Medicare operations app for Windows: analytics, reports, CRM records, fax, SunFire and bots in one window.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -350,7 +352,7 @@ footer .sys i{width:7px;height:7px;border-radius:50%;background:#2BB57E;animatio
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6.5 9.5 5.5 5.5 5.5-5.5"/><path d="M4 20h16"/></svg>
           Download for Windows
         </a>
-        <p class="meta">Version 0.3 · Windows 10 and 11, 64-bit · about 320 MB</p>
+        <p class="meta"><span data-version>Latest version</span> · Windows 10 and 11, 64-bit · <span data-size>about 320 MB</span></p>
         <p class="trust"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="flex:none;margin-top:2px"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span><b>For Everything Medicare staff.</b> Anyone can install Nexus, but it only opens your agency data after you sign in with your own account.</span></p>
       </div>
     </div>
@@ -493,7 +495,7 @@ footer .sys i{width:7px;height:7px;border-radius:50%;background:#2BB57E;animatio
         <dt>Disk space</dt><dd>About 1 GB</dd>
         <dt>Internet</dt><dd>Required to sign in, sync and update</dd>
         <dt>Account</dt><dd>An Everything Medicare login</dd>
-        <dt>Version</dt><dd>0.3</dd>
+        <dt>Version</dt><dd data-version>Latest</dd>
       </dl>
       <a class="btn" href="https://github.com/novacypherAI/Nexus-Releases/releases/latest/download/Nexus-Setup.exe">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m6.5 9.5 5.5 5.5 5.5-5.5"/><path d="M4 20h16"/></svg>
@@ -507,8 +509,8 @@ footer .sys i{width:7px;height:7px;border-radius:50%;background:#2BB57E;animatio
   <div class="wrap">
     <div class="flow-head"><span class="kicker"><span class="no">06</span>Help</span><h2 id="faq-title">Questions before you install</h2></div>
     <details>
-      <summary>Windows says it couldn't verify the publisher. What do I do?</summary>
-      <p>Code signing for the Nexus installer is being set up. Until it's in place, Windows may show a warning or block the installer. If you see "Windows protected your PC", choose More info, then Run anyway.</p>
+      <summary>Windows shows a warning when I open the installer. What do I do?</summary>
+      <p>The Nexus installer is digitally signed, and Windows lists the verified publisher as Sarah Wesner. Because the signature is new, Windows SmartScreen may still show "Windows protected your PC" for a while. If it does, check that the publisher is Sarah Wesner, then choose More info and Run anyway.</p>
       <p>If Smart App Control blocks it, ask the Nexus team before changing any Windows security settings.</p>
     </details>
     <details>
@@ -604,6 +606,17 @@ footer .sys i{width:7px;height:7px;border-radius:50%;background:#2BB57E;animatio
   }
   var started=false,io=new IntersectionObserver(function(es){if(es[0].isIntersecting&&!started){started=true;step()}});io.observe(el);
 })();
+</script>
+<script>
+// Show the current release's version and size. If GitHub can't be reached, the defaults stay and the download link still works.
+fetch('https://api.github.com/repos/novacypherAI/Nexus-Releases/releases/latest',{headers:{Accept:'application/vnd.github+json'}})
+  .then(r=>r.ok?r.json():null).then(release=>{
+    if(!release)return;
+    const version=String(release.tag_name||'').replace(/^v/,'');
+    const asset=(release.assets||[]).find(a=>a.name==='Nexus-Setup.exe');
+    if(version)document.querySelectorAll('[data-version]').forEach(el=>{el.textContent=el.tagName==='DD'?version:'Version '+version;});
+    if(asset)document.querySelectorAll('[data-size]').forEach(el=>{el.textContent=Math.round(asset.size/1048576)+' MB';});
+  }).catch(()=>{});
 </script>
 </body>
 </html>
