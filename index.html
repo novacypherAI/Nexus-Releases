@@ -323,6 +323,7 @@ details[open] p{animation:rise .4s ease both}
 footer .sys{font:500 12px/1 var(--mono);color:#7FE0B4;display:flex;align-items:center;gap:8px}
 footer .sys i{width:7px;height:7px;border-radius:50%;background:#2BB57E;animation:blink 1.6s infinite}
 @media (prefers-reduced-motion:reduce){.hero .grid-bg::after{display:none}}
+.meta.mac a{color:inherit;font-weight:700;text-decoration:underline}
 </style>
 </head>
 <body>
@@ -353,6 +354,7 @@ footer .sys i{width:7px;height:7px;border-radius:50%;background:#2BB57E;animatio
           Download for Windows
         </a>
         <p class="meta"><span data-version>Latest version</span> · Windows 10 and 11, 64-bit · <span data-size>about 320 MB</span></p>
+        <p class="meta mac" data-mac hidden>On a Mac? Download for <a data-mac-arch="arm64" href="#">Apple Silicon (M1–M4)</a> or <a data-mac-arch="x64" href="#">Intel</a> · <a href="#mac-help">first-time opening</a></p>
         <p class="trust"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="flex:none;margin-top:2px"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span><b>For Everything Medicare staff.</b> Anyone can install Nexus, but it only opens your agency data after you sign in with your own account.</span></p>
       </div>
     </div>
@@ -508,6 +510,10 @@ footer .sys i{width:7px;height:7px;border-radius:50%;background:#2BB57E;animatio
 <section class="faq" id="faq" aria-labelledby="faq-title">
   <div class="wrap">
     <div class="flow-head"><span class="kicker"><span class="no">06</span>Help</span><h2 id="faq-title">Questions before you install</h2></div>
+    <details id="mac-help">
+      <summary>How do I install Nexus on a Mac?</summary>
+      <p>Pick Apple Silicon if your Mac has an M1, M2, M3 or M4 chip (Apple menu &gt; About This Mac), otherwise Intel. Open the downloaded file and drag Nexus into Applications. The Mac version is not yet registered with Apple, so the first time, right-click Nexus in Applications and choose Open, then Open again. When a new version is ready, Nexus downloads it and shows Update now; drag the new Nexus into Applications and choose Replace. SunPass logins on a Mac are kept in your Mac's Keychain.</p>
+    </details>
     <details>
       <summary>Windows shows a warning when I open the installer. What do I do?</summary>
       <p>The Nexus installer is digitally signed, and Windows lists the verified publisher as Sarah Wesner. Because the signature is new, Windows SmartScreen may still show "Windows protected your PC" for a while. If it does, check that the publisher is Sarah Wesner, then choose More info and Run anyway.</p>
@@ -621,6 +627,9 @@ fetch('https://api.github.com/repos/novacypherAI/Nexus-Releases/releases?per_pag
     if(newest){const version=newest.tag_name.replace(/^v/,'');
       document.querySelectorAll('[data-version]').forEach(el=>{el.textContent=el.tagName==='DD'?version:'Version '+version;});
       document.querySelectorAll('[data-short-version]').forEach(el=>{el.textContent='v'+version;});}
+    // Mac links appear once a release carries the Mac builds.
+    let mac=null;for(const r of list){if(r.draft)continue;if((r.assets||[]).some(x=>x.name==='Nexus-mac-arm64.dmg')&&(!mac||newer(r.tag_name,mac.tag_name)))mac=r;}
+    if(mac){document.querySelectorAll('[data-mac-arch]').forEach(a=>{a.href='https://github.com/novacypherAI/Nexus-Releases/releases/download/'+mac.tag_name+'/Nexus-mac-'+a.dataset.macArch+'.dmg';});document.querySelectorAll('[data-mac]').forEach(el=>{el.hidden=false;});}
     if(installer)document.querySelectorAll('[data-size]').forEach(el=>{el.textContent=Math.round(installer.size/1048576)+' MB';});
   }).catch(()=>{});
 </script>
